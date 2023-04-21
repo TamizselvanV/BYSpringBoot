@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-// to return a set of static values
+ /**
+  * 
+  * @author tamv
+  * Controller Class for Order and Shipment
+  */
 
 @RestController
 public class CourseController {

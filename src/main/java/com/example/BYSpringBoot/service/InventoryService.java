@@ -1,4 +1,4 @@
-package com.example.BYSpringBoot.Inventory;
+package com.example.BYSpringBoot.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,22 +8,16 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.BYSpringBoot.data.InventoryData;
+import com.example.BYSpringBoot.model.InventoryATP;
+import com.example.BYSpringBoot.model.InventoryDemand;
+import com.example.BYSpringBoot.model.InventorySupply;
+
 @Service
 public class InventoryService {
 
-	public static List<InventorySupply> listInvSuppply = new ArrayList<>();
-	public static List<InventoryDemand> listInvDemand = new ArrayList<>();
-
-	static {
-
-		listInvSuppply.add(new InventorySupply("I001", 10, LocalDateTime.of(2023, 4, 19, 8, 30)));
-		listInvSuppply.add(new InventorySupply("I002", 25, LocalDateTime.of(2023, 4, 18, 10, 10)));
-		listInvSuppply.add(new InventorySupply("I003", 5, LocalDateTime.of(2023, 4, 17, 22, 50)));
-
-		listInvDemand.add(new InventoryDemand("I001", 8, LocalDateTime.of(2023, 4, 19, 8, 30)));
-		listInvDemand.add(new InventoryDemand("I002", 20, LocalDateTime.of(2023, 4, 19, 8, 30)));
-		listInvDemand.add(new InventoryDemand("I003", 5, LocalDateTime.of(2023, 4, 19, 8, 30)));
-	}
+	public static List<InventorySupply> listInvSuppply = InventoryData.listInventorySupply();
+	public static List<InventoryDemand> listInvDemand = InventoryData.listInventoryDemand();
 
 	public InventoryATP fetchATPOfItem(String ItemID) {
 
@@ -51,7 +45,8 @@ public class InventoryService {
 		Predicate<? super InventorySupply> predicateSupply = InventorySupply -> InventorySupply.getItemID()
 				.equalsIgnoreCase(updateInv.getItemID());
 
-		InventorySupply itemSupply = listInvSuppply.stream().filter(predicateSupply).map((CurrentSupply) -> {
+		InventorySupply itemSupply = listInvSuppply.stream().filter(predicateSupply).map((CurrentSupply) -> {		
+
 			int intCurrentQty = CurrentSupply.getSupply();
 			int intUpdateQty = updateInv.getSupply();
 			if (updateInv.getAvailableDate().isAfter(CurrentSupply.getAvailableDate())) {
@@ -60,7 +55,7 @@ public class InventoryService {
 			}
 			return CurrentSupply;
 		}).findFirst().orElseThrow(() -> {
-			throw new ResponseStatusException(HttpStatusCode.valueOf(203), "Inventory Update Failed");
+			throw new ResponseStatusException(HttpStatusCode.valueOf(203), "**Inventory Update Failed**");
 		});
 
 		return itemSupply;
